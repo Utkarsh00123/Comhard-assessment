@@ -1,5 +1,30 @@
 'use client'
 
+/**
+ * ============================================================================
+ * MAIN DASHBOARD PAGE (app/page.tsx)
+ * ============================================================================
+ * HOW IT WORKS:
+ * Primary split-view application layout adhering to the Stitch minimal design.
+ * 
+ * CORE ARCHITECTURE:
+ * 1. Authentication Protection: Automatically routes unauthenticated visitors to `/login`.
+ * 2. Left Navigation Sidebar:
+ *    - Search input
+ *    - Task Buckets: All Tasks, Due Today, Upcoming
+ *    - View Switcher: List, Kanban, Grid, Section
+ *    - User Profile & Logout action
+ * 3. Main Workspace:
+ *    - Header with task counter and live portfolio SLA badges
+ *    - Quick importance filter toggles
+ *    - Active View Component (ListView, GridView, KanbanView, or SectionView)
+ *    - Quick status queues for 'To Do' and 'In Progress'
+ * 4. Keyboard Shortcuts: Pressing 'C' on the keyboard immediately opens the task creation modal.
+ * 
+ * WHERE ITS EFFECTS LEAD:
+ * - Serves as the central operating environment for the authenticated user.
+ */
+
 import React, { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/context/AuthContext'
@@ -41,20 +66,37 @@ export default function DashboardPage() {
     categories,
   } = useTasks()
 
+  // Active task category filter (All, Due Today, or Upcoming)
   const [activeTaskFilter, setActiveTaskFilter] = useState<'all' | 'today' | 'upcoming'>('all')
+  // Active board view mode
   const [activeView, setActiveView] = useState<'list' | 'grid' | 'kanban' | 'section'>('list')
+  // Task creation/edit modal visibility
   const [isModalOpen, setIsModalOpen] = useState(false)
+  // Selected task to populate edit modal (null if creating a new task)
   const [taskToEdit, setTaskToEdit] = useState<Task | null>(null)
+  // Initial status for newly opened create modal
   const [defaultStatusForNew, setDefaultStatusForNew] = useState<TaskStatus>('To Do')
 
-  // Protect route: redirect to /login if unauthenticated
+  /**
+   * Route Guard
+   * --------------------------------------------------------------------------
+   * HOW IT WORKS:
+   * Once initial auth loading resolves, verifies `user` presence.
+   * If null, redirects to `/login`.
+   */
   useEffect(() => {
     if (!authLoading && !user) {
       router.push('/login')
     }
   }, [user, authLoading, router])
 
-  // Keyboard shortcut: Press 'C' to add task quickly
+  /**
+   * Keyboard Shortcut Listener
+   * --------------------------------------------------------------------------
+   * HOW IT WORKS:
+   * Listens for the 'C' keypress globally (unless currently typing in an input/textarea).
+   * Opens the Create Task modal instantly for optimal keyboard-driven ergonomics.
+   */
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.key === 'c' || e.key === 'C') && !e.metaKey && !e.ctrlKey) {
@@ -71,7 +113,7 @@ export default function DashboardPage() {
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [])
 
-  // Calculate task counts
+  // Calculate tasks due today based on current calendar date
   const now = new Date()
   const todayTasks = useMemo(() => {
     return tasks.filter((t) => {
@@ -85,6 +127,7 @@ export default function DashboardPage() {
     })
   }, [tasks, now])
 
+  // Calculate upcoming tasks with due dates in the future
   const upcomingTasks = useMemo(() => {
     return tasks.filter((t) => {
       if (!t.dueDate) return false
@@ -92,23 +135,27 @@ export default function DashboardPage() {
     })
   }, [tasks, now])
 
+  // Tasks to display based on the selected sidebar time category
   const displayedTasks = useMemo(() => {
     if (activeTaskFilter === 'today') return todayTasks
     if (activeTaskFilter === 'upcoming') return upcomingTasks
     return tasks
   }, [activeTaskFilter, todayTasks, upcomingTasks, tasks])
 
+  // Modal open helper for creating tasks with a preset status
   const handleOpenCreateModal = (status: TaskStatus = 'To Do') => {
     setDefaultStatusForNew(status)
     setTaskToEdit(null)
     setIsModalOpen(true)
   }
 
+  // Modal open helper for editing an existing task
   const handleEditTask = (task: Task) => {
     setTaskToEdit(task)
     setIsModalOpen(true)
   }
 
+  // Toggle priority filter pill
   const toggleImportance = (imp: TaskImportance) => {
     setFilter((prev) => {
       const exists = prev.importance.includes(imp)
@@ -117,6 +164,7 @@ export default function DashboardPage() {
     })
   }
 
+  // Loading spinner during session validation
   if (authLoading) {
     return (
       <div className="min-h-screen bg-[#E8ECE6] flex flex-col items-center justify-center">
@@ -126,12 +174,14 @@ export default function DashboardPage() {
     )
   }
 
+  // Prevent render if unauthenticated
   if (!user) return null
 
   return (
     <div className="h-screen w-screen overflow-hidden bg-white text-slate-800 flex flex-col lg:flex-row">
       {/* Left Sidebar */}
       <aside className="w-full lg:w-72 bg-[#F6F7F4] border-r border-[#E8ECE6] p-6 flex flex-col justify-between shrink-0 h-full min-h-0 overflow-y-auto">
+
           <div className="space-y-6">
             {/* Sidebar Header & Search */}
             <div>

@@ -1,5 +1,23 @@
 'use client'
 
+/**
+ * ============================================================================
+ * LIST VIEW COMPONENT (ListView.tsx)
+ * ============================================================================
+ * HOW IT WORKS:
+ * Displays tasks in a clean, horizontal row-based list format.
+ * 
+ * CORE FEATURES:
+ * 1. Empty State Fallback: Shows helpful placeholder when no tasks match current filters.
+ * 2. Row Details: Checkbox, task title, description preview, due date badge, live SLA clock,
+ *    status chip, and category indicator.
+ * 3. Quick Actions: Workflow transition buttons (move back/forward), edit, and delete triggers.
+ * 
+ * WHERE ITS EFFECTS LEAD:
+ * - Direct user interactions trigger state mutations in `TaskContext.tsx`,
+ *   which update the local state optimistically and persist changes into Neon PostgreSQL.
+ */
+
 import React from 'react'
 import { Task } from '@/types'
 import { useTasks } from '@/context/TaskContext'
@@ -13,6 +31,7 @@ interface Props {
 export const ListView: React.FC<Props> = ({ onEdit }) => {
   const { filteredTasks, moveTaskStatus, deleteTask, calculateTaskSLAMetrics } = useTasks()
 
+  // Render empty state if no tasks match the active filters
   if (filteredTasks.length === 0) {
     return (
       <div className="rounded-2xl border border-dashed border-slate-200 p-8 text-center bg-slate-50/50">
@@ -21,6 +40,7 @@ export const ListView: React.FC<Props> = ({ onEdit }) => {
     )
   }
 
+  // Returns bullet color according to importance
   const categoryColor = (importance: string) => {
     switch (importance) {
       case 'High':
@@ -35,6 +55,7 @@ export const ListView: React.FC<Props> = ({ onEdit }) => {
   return (
     <div className="space-y-2.5">
       {filteredTasks.map((task) => {
+        // Calculate dynamic real-time SLA metrics for this task
         const metrics = calculateTaskSLAMetrics(task)
         const isDone = task.status === 'Done'
 
@@ -43,7 +64,7 @@ export const ListView: React.FC<Props> = ({ onEdit }) => {
             key={task.id}
             className="group flex flex-col md:flex-row md:items-center justify-between gap-3 p-3.5 rounded-2xl border border-slate-100 hover:border-slate-200 hover:bg-slate-50/70 transition bg-white shadow-xs"
           >
-            {/* Left: Checkbox + Title */}
+            {/* Left: Completion Checkbox + Title + Description */}
             <div className="flex items-center gap-3">
               <input
                 type="checkbox"
@@ -70,7 +91,7 @@ export const ListView: React.FC<Props> = ({ onEdit }) => {
               </div>
             </div>
 
-            {/* Right: Badges & Details */}
+            {/* Right: Badges, SLA Timer, and Quick Action Controls */}
             <div className="flex items-center gap-3 pl-7 md:pl-0 flex-wrap">
               {/* Due Date badge */}
               <span className="inline-flex items-center gap-1.5 text-xs text-slate-500 font-medium">
@@ -78,19 +99,21 @@ export const ListView: React.FC<Props> = ({ onEdit }) => {
                 <span>{formatDate(task.dueDate)}</span>
               </span>
 
-              {/* SLA Live Clock */}
+              {/* Real-time SLA Live Clock */}
               <span className="inline-flex items-center gap-1 text-xs bg-slate-100 px-2.5 py-0.5 rounded-md font-mono font-medium text-slate-700">
                 <Clock className="w-3 h-3 text-slate-400" />
                 {isDone ? (
+                  // Strictly 0s when in Done stage
                   <span className="text-emerald-600">0s (Done)</span>
                 ) : (
+                  // Live active ticking clock
                   <span className="text-indigo-600">
                     {formatDuration(metrics.timeInCurrentSectionSeconds)}
                   </span>
                 )}
               </span>
 
-              {/* Status Badge */}
+              {/* Workflow Status Badge */}
               <span className="inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-md bg-slate-100 text-slate-700">
                 {task.status}
               </span>
@@ -103,6 +126,7 @@ export const ListView: React.FC<Props> = ({ onEdit }) => {
 
               {/* Stage Transition Quick Buttons */}
               <div className="flex items-center space-x-1 opacity-80 group-hover:opacity-100 transition">
+                {/* Move backward to To Do */}
                 {task.status === 'In Progress' && (
                   <button
                     onClick={() => moveTaskStatus(task.id, 'To Do')}
@@ -112,6 +136,7 @@ export const ListView: React.FC<Props> = ({ onEdit }) => {
                     <ArrowLeft className="w-3.5 h-3.5" />
                   </button>
                 )}
+                {/* Move forward to In Progress */}
                 {task.status === 'To Do' && (
                   <button
                     onClick={() => moveTaskStatus(task.id, 'In Progress')}
@@ -121,6 +146,7 @@ export const ListView: React.FC<Props> = ({ onEdit }) => {
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 )}
+                {/* Mark as Done */}
                 {task.status === 'In Progress' && (
                   <button
                     onClick={() => moveTaskStatus(task.id, 'Done')}
@@ -130,6 +156,7 @@ export const ListView: React.FC<Props> = ({ onEdit }) => {
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 )}
+                {/* Edit Task Dialog Trigger */}
                 <button
                   onClick={() => onEdit(task)}
                   className="p-1 text-slate-400 hover:text-blue-600"
@@ -137,6 +164,7 @@ export const ListView: React.FC<Props> = ({ onEdit }) => {
                 >
                   <Edit2 className="w-3.5 h-3.5" />
                 </button>
+                {/* Delete Task */}
                 <button
                   onClick={() => {
                     if (confirm(`Delete "${task.title}"?`)) deleteTask(task.id)
@@ -164,3 +192,4 @@ export const ListView: React.FC<Props> = ({ onEdit }) => {
     </div>
   )
 }
+

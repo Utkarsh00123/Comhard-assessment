@@ -1,5 +1,27 @@
 'use client'
 
+/**
+ * ============================================================================
+ * TASK CREATION & EDIT MODAL (TaskModal.tsx)
+ * ============================================================================
+ * HOW IT WORKS:
+ * Dual-purpose modal dialog that handles both:
+ * 1. Creating a brand new task (`createTask()`)
+ * 2. Editing an existing task (`updateTask()`)
+ * 
+ * FORM FIELDS:
+ * - Title (required string)
+ * - Description (optional text area)
+ * - Category (text input with datalist auto-suggestions from current tasks)
+ * - Due Date (date picker normalized into an ISO 8601 string)
+ * - Importance (High, Medium, Low dropdown)
+ * - Status (To Do, In Progress, Done dropdown)
+ * 
+ * WHERE ITS EFFECTS LEAD:
+ * - On submit, dispatches updates to `TaskContext`, which calls the backend API.
+ * - If status changed during edit, triggers server-side SLA transition logging.
+ */
+
 import React, { useState, useEffect } from 'react'
 import { Task, TaskImportance, TaskStatus } from '@/types'
 import { useTasks } from '@/context/TaskContext'
@@ -14,6 +36,7 @@ interface Props {
 export const TaskModal: React.FC<Props> = ({ isOpen, onClose, taskToEdit }) => {
   const { createTask, updateTask, categories } = useTasks()
 
+  // Local form state
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [category, setCategory] = useState('General')
@@ -23,6 +46,14 @@ export const TaskModal: React.FC<Props> = ({ isOpen, onClose, taskToEdit }) => {
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  /**
+   * Form Initialization Effect
+   * --------------------------------------------------------------------------
+   * HOW IT WORKS:
+   * When modal opens or `taskToEdit` changes:
+   * - If editing: populates form with existing task attributes.
+   * - If creating: resets fields to clean defaults (Due date set to 7 days in future).
+   */
   useEffect(() => {
     if (taskToEdit) {
       setTitle(taskToEdit.title)
@@ -45,6 +76,15 @@ export const TaskModal: React.FC<Props> = ({ isOpen, onClose, taskToEdit }) => {
 
   if (!isOpen) return null
 
+  /**
+   * handleSubmit
+   * --------------------------------------------------------------------------
+   * HOW IT WORKS:
+   * 1. Validates required title.
+   * 2. Constructs payload with trimmed strings and converted ISO dates.
+   * 3. Calls `updateTask(id, payload)` if editing, or `createTask(payload)` if creating.
+   * 4. Closes modal on success or sets error message on failure.
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!title.trim()) {
@@ -83,6 +123,7 @@ export const TaskModal: React.FC<Props> = ({ isOpen, onClose, taskToEdit }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs p-4">
       <div className="bg-white rounded-2xl border border-slate-200 shadow-xl w-full max-w-lg overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+        {/* Modal Header */}
         <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
           <h2 className="text-base font-bold text-slate-900">
             {taskToEdit ? 'Edit Task' : 'Create New Task'}
@@ -95,7 +136,9 @@ export const TaskModal: React.FC<Props> = ({ isOpen, onClose, taskToEdit }) => {
           </button>
         </div>
 
+        {/* Modal Form */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          {/* Error Banner */}
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 text-xs px-3 py-2 rounded-lg flex items-center">
               <AlertCircle className="w-4 h-4 mr-2 shrink-0" />
@@ -103,6 +146,7 @@ export const TaskModal: React.FC<Props> = ({ isOpen, onClose, taskToEdit }) => {
             </div>
           )}
 
+          {/* Title Input */}
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Title *
@@ -117,6 +161,7 @@ export const TaskModal: React.FC<Props> = ({ isOpen, onClose, taskToEdit }) => {
             />
           </div>
 
+          {/* Description Textarea */}
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1">
               Description
@@ -130,6 +175,7 @@ export const TaskModal: React.FC<Props> = ({ isOpen, onClose, taskToEdit }) => {
             />
           </div>
 
+          {/* Category with Datalist Suggestions & Due Date */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
@@ -164,6 +210,7 @@ export const TaskModal: React.FC<Props> = ({ isOpen, onClose, taskToEdit }) => {
             </div>
           </div>
 
+          {/* Importance Priority & Status Dropdowns */}
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
@@ -196,6 +243,7 @@ export const TaskModal: React.FC<Props> = ({ isOpen, onClose, taskToEdit }) => {
             </div>
           </div>
 
+          {/* Form Actions (Cancel & Submit) */}
           <div className="pt-4 border-t border-slate-100 flex items-center justify-end space-x-3">
             <button
               type="button"
@@ -221,3 +269,4 @@ export const TaskModal: React.FC<Props> = ({ isOpen, onClose, taskToEdit }) => {
     </div>
   )
 }
+

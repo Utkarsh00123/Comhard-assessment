@@ -1,5 +1,22 @@
 'use client'
 
+/**
+ * ============================================================================
+ * LOGIN PAGE (app/login/page.tsx)
+ * ============================================================================
+ * HOW IT WORKS:
+ * Renders the user authentication sign-in form.
+ * 
+ * CORE WORKFLOW:
+ * 1. Pre-Auth Check: If the user is already authenticated (or restored from session),
+ *    the `useEffect` hook immediately navigates to `/` (dashboard).
+ * 2. Form Submission: Collects `email` and `password` and dispatches `login(email, password)`
+ *    via `AuthContext.tsx`.
+ * 3. Network Call: Calls POST `/api/auth/login`, which verifies bcrypt hash in Neon DB.
+ * 4. Error Feedback: Renders an alert banner if credentials are bad or server fails.
+ * 5. Navigation: Redirects to `/` on success, or links to `/signup` and `/forgot-password`.
+ */
+
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -10,17 +27,26 @@ export default function LoginPage() {
   const router = useRouter()
   const { user, login, isLoading } = useAuth()
 
+  // Form input states
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  // Redirect to dashboard if session is already active
   useEffect(() => {
     if (!isLoading && user) {
       router.push('/')
     }
   }, [user, isLoading, router])
 
+  /**
+   * Form Submission Handler
+   * --------------------------------------------------------------------------
+   * HOW IT WORKS:
+   * Prevents default form reload, resets prior errors, and calls `login()`.
+   * On success, routes to dashboard; on error, surfaces message in red banner.
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
@@ -38,15 +64,18 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      {/* Page Title */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="text-center text-2xl font-bold tracking-tight text-slate-900">
           Sign in to your account
         </h2>
       </div>
 
+      {/* Login Card */}
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-6 shadow-sm border border-slate-200 sm:rounded-2xl sm:px-10">
           <form className="space-y-5" onSubmit={handleSubmit}>
+            {/* Error Message Box */}
             {error && (
               <div className="bg-red-50 border border-red-200 text-red-700 text-xs px-3 py-2.5 rounded-lg flex items-center">
                 <AlertCircle className="w-4 h-4 mr-2 shrink-0" />
@@ -54,6 +83,7 @@ export default function LoginPage() {
               </div>
             )}
 
+            {/* Email Field */}
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
                 Email address
@@ -71,6 +101,7 @@ export default function LoginPage() {
               </div>
             </div>
 
+            {/* Password Field & Forgot Password Link */}
             <div>
               <div className="flex items-center justify-between mb-1">
                 <label className="block text-xs font-semibold text-slate-700">
@@ -96,6 +127,7 @@ export default function LoginPage() {
               </div>
             </div>
 
+            {/* Submit Button */}
             <button
               type="submit"
               disabled={isSubmitting}
@@ -112,6 +144,7 @@ export default function LoginPage() {
             </button>
           </form>
 
+          {/* Registration Navigation Link */}
           <div className="mt-6 text-center text-xs text-slate-500">
             Don't have an account?{' '}
             <Link
@@ -126,3 +159,4 @@ export default function LoginPage() {
     </div>
   )
 }
+

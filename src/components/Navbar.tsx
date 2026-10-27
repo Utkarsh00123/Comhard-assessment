@@ -1,5 +1,22 @@
 'use client'
 
+/**
+ * ============================================================================
+ * TOP NAVIGATION BAR (Navbar.tsx)
+ * ============================================================================
+ * HOW IT WORKS:
+ * Renders the sticky top header of the application.
+ * 
+ * KEY ELEMENTS:
+ * 1. Brand Logo & Title: Displays the TaskManager brand and icon.
+ * 2. Database Status Badge: Indicates live connection to Neon PostgreSQL.
+ * 3. User Identity Display: Shows the signed-in user's name/email from `AuthContext`.
+ * 4. Sign Out Button: Dispatches `logout()`, removing the JWT and routing to `/login`.
+ * 
+ * WHERE ITS EFFECTS LEAD:
+ * - Provides consistent top-level navigation and identity reassurance across pages.
+ */
+
 import React from 'react'
 import { useAuth } from '@/context/AuthContext'
 import { CheckSquare, LogOut, Database, User as UserIcon } from 'lucide-react'
@@ -10,6 +27,7 @@ export const Navbar: React.FC = () => {
   return (
     <header className="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        {/* Brand identity */}
         <div className="flex items-center space-x-3">
           <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-sm">
             <CheckSquare className="w-5 h-5" />
@@ -27,6 +45,7 @@ export const Navbar: React.FC = () => {
           </div>
         </div>
 
+        {/* Authenticated user profile and logout button */}
         {user && (
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2 text-sm text-slate-600 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-lg">
@@ -47,3 +66,4 @@ export const Navbar: React.FC = () => {
     </header>
   )
 }
+

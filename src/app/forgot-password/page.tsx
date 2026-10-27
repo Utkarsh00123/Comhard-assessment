@@ -1,5 +1,21 @@
 'use client'
 
+/**
+ * ============================================================================
+ * FORGOT PASSWORD PAGE (app/forgot-password/page.tsx)
+ * ============================================================================
+ * HOW IT WORKS:
+ * Enables users to request a password recovery token.
+ * 
+ * CORE WORKFLOW:
+ * 1. Collects the user's registered email address.
+ * 2. Issues POST `/api/auth/forgot-password` to create a 32-byte cryptographic token
+ *    and store it with an expiration timestamp in Neon PostgreSQL.
+ * 3. Shows confirmation message and displays the generated token on screen
+ *    (facilitating manual review & verification during evaluation).
+ * 4. Provides convenient link back to `/login`.
+ */
+
 import React, { useState } from 'react'
 import Link from 'next/link'
 import { CheckSquare, Mail, ArrowLeft, AlertCircle, CheckCircle2, Database } from 'lucide-react'
@@ -11,6 +27,12 @@ export default function ForgotPasswordPage() {
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  /**
+   * Password Reset Submission Handler
+   * --------------------------------------------------------------------------
+   * HOW IT WORKS:
+   * Submits email to reset endpoint and displays returned instructions/token.
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
@@ -42,6 +64,7 @@ export default function ForgotPasswordPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
           <div className="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-md">

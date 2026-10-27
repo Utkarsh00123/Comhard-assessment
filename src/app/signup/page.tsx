@@ -1,5 +1,21 @@
 'use client'
 
+/**
+ * ============================================================================
+ * SIGNUP / REGISTRATION PAGE (app/signup/page.tsx)
+ * ============================================================================
+ * HOW IT WORKS:
+ * Provides user registration interface.
+ * 
+ * CORE WORKFLOW:
+ * 1. Pre-Auth Check: If the user is already authenticated, redirects to `/`.
+ * 2. Client-Side Validation: Ensures password confirmation matches and meets minimum 6 characters.
+ * 3. Network Call: Dispatches `signup()` via `AuthContext.tsx`, which calls POST `/api/auth/signup`.
+ * 4. Password Security: Password is encrypted with `bcryptjs` on the server before database storage.
+ * 5. Instant Login: On account creation, the server issues a JWT token so the user is immediately
+ *    logged in and routed to the dashboard.
+ */
+
 import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
@@ -10,6 +26,7 @@ export default function SignupPage() {
   const router = useRouter()
   const { user, signup, isLoading } = useAuth()
 
+  // Form field states
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -17,12 +34,22 @@ export default function SignupPage() {
   const [error, setError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  // Redirect to dashboard if session already active
   useEffect(() => {
     if (!isLoading && user) {
       router.push('/')
     }
   }, [user, isLoading, router])
 
+  /**
+   * Form Submission Handler
+   * --------------------------------------------------------------------------
+   * HOW IT WORKS:
+   * 1. Validates password equality.
+   * 2. Enforces minimum length constraint (6 characters).
+   * 3. Dispatches `signup()` action.
+   * 4. Redirects to `/` on success or displays error alert.
+   */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
@@ -50,6 +77,7 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      {/* Brand Header */}
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
           <div className="w-12 h-12 rounded-2xl bg-indigo-600 flex items-center justify-center text-white shadow-md">
@@ -59,6 +87,7 @@ export default function SignupPage() {
         <h2 className="mt-4 text-center text-2xl font-bold tracking-tight text-slate-900">
           Create your account
         </h2>
+
         <div className="mt-2 flex items-center justify-center">
           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
             <Database className="w-3 h-3 mr-1 text-emerald-600" />

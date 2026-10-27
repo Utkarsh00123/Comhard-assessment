@@ -1,3 +1,22 @@
+/**
+ * ============================================================================
+ * DATABASE INITIALIZATION & MIGRATION SCRIPT (init-db.mjs)
+ * ============================================================================
+ * HOW IT WORKS:
+ * Connects directly to Neon PostgreSQL using `@neondatabase/serverless` and runs
+ * idempotent DDL statements (`CREATE TABLE IF NOT EXISTS`, `CREATE INDEX IF NOT EXISTS`)
+ * to establish the production relational schema.
+ * 
+ * TABLES CREATED:
+ * 1. `users`: Stores user accounts, bcrypt password hashes, and recovery tokens.
+ * 2. `tasks`: Stores task items, deadlines, priorities, and SLA tracking metrics.
+ * 3. `sla_logs`: Stores immutable transition history when tasks change status.
+ * 4. Indexes: High-speed B-Tree indexes on foreign keys, status filters, and due dates.
+ * 
+ * USAGE:
+ * node scripts/init-db.mjs
+ */
+
 import { neon } from '@neondatabase/serverless'
 
 const databaseUrl = process.env.DATABASE_URL
@@ -12,7 +31,7 @@ const sql = neon(databaseUrl)
 async function main() {
   console.log('Connecting to Neon Database and running schema setup...')
 
-  // 1. Users table
+  // 1. Users table: Central identity store
   await sql`
     CREATE TABLE IF NOT EXISTS users (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -26,7 +45,7 @@ async function main() {
   `
   console.log('✓ Users table ready')
 
-  // 2. Tasks table
+  // 2. Tasks table: Core domain entity with SLA tracking attributes
   await sql`
     CREATE TABLE IF NOT EXISTS tasks (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -46,7 +65,7 @@ async function main() {
   `
   console.log('✓ Tasks table ready')
 
-  // 3. SLA logs table
+  // 3. SLA logs table: Immutable transition audit log
   await sql`
     CREATE TABLE IF NOT EXISTS sla_logs (
       id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -60,7 +79,7 @@ async function main() {
   `
   console.log('✓ SLA logs table ready')
 
-  // 4. Create Indexes for performance
+  // 4. Create Indexes for query performance & rapid lookups
   await sql`CREATE INDEX IF NOT EXISTS idx_tasks_user_id ON tasks(user_id);`
   await sql`CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status);`
   await sql`CREATE INDEX IF NOT EXISTS idx_tasks_due_date ON tasks(due_date);`
@@ -74,3 +93,4 @@ main().catch((err) => {
   console.error('Database initialization failed:', err)
   process.exit(1)
 })
+

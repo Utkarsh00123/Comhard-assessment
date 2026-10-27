@@ -1,5 +1,26 @@
 'use client'
 
+/**
+ * ============================================================================
+ * GLOBAL FILTER & VIEW SWITCHER BAR (GlobalFilterBar.tsx)
+ * ============================================================================
+ * HOW IT WORKS:
+ * Provides a responsive control toolbar above the task boards.
+ * 
+ * CORE CAPABILITIES:
+ * 1. View Mode Switching: Toggles between 'list', 'grid', 'kanban', and 'section'.
+ * 2. Multi-Select Importance Filters: Allows filtering by any combination of High, Medium, Low.
+ * 3. Substring Search: Live text input that matches task titles or descriptions.
+ * 4. Date Sorting: Sorts by Due Date or Creation Date (Ascending / Descending).
+ * 5. Category Dropdown: Filters tasks by dynamic categories extracted from current inventory.
+ * 6. Quick Task Creation: Modal launcher button.
+ * 
+ * WHERE ITS EFFECTS LEAD:
+ * - Mutates the centralized `filter` state inside `TaskContext.tsx`.
+ * - Automatically cascades down to whatever view mode is active, ensuring 100% filter
+ *   consistency regardless of layout.
+ */
+
 import React from 'react'
 import { useTasks } from '@/context/TaskContext'
 import { TaskImportance } from '@/types'
@@ -20,6 +41,13 @@ export const GlobalFilterBar: React.FC<Props> = ({
 
   const importanceOptions: TaskImportance[] = ['High', 'Medium', 'Low']
 
+  /**
+   * toggleImportance
+   * --------------------------------------------------------------------------
+   * HOW IT WORKS:
+   * Multi-select toggle handler. If priority already exists in `filter.importance`,
+   * it removes it; otherwise, it appends it.
+   */
   const toggleImportance = (imp: TaskImportance) => {
     setFilter((prev) => {
       const exists = prev.importance.includes(imp)
@@ -32,7 +60,7 @@ export const GlobalFilterBar: React.FC<Props> = ({
 
   return (
     <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-xs mb-6 space-y-4">
-      {/* Top row: View Switcher and Add Task button */}
+      {/* Top row: View Mode Switcher and Create Task action button */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         {/* View Switcher Tabs */}
         <div className="flex items-center space-x-1 bg-slate-100 p-1 rounded-lg border border-slate-200">
@@ -82,7 +110,7 @@ export const GlobalFilterBar: React.FC<Props> = ({
           </button>
         </div>
 
-        {/* Action Button */}
+        {/* Primary Action Button to Open Task Creation Modal */}
         <button
           onClick={onOpenCreateModal}
           className="inline-flex items-center justify-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-semibold shadow-xs hover:shadow transition-all"
@@ -92,9 +120,9 @@ export const GlobalFilterBar: React.FC<Props> = ({
         </button>
       </div>
 
-      {/* Bottom row: Global Filters */}
+      {/* Bottom row: Multi-dimensional Filtering Controls */}
       <div className="flex flex-wrap items-center gap-3 pt-3 border-t border-slate-100">
-        {/* Search Input */}
+        {/* Real-time Substring Search */}
         <div className="relative min-w-[200px] flex-1">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
           <input
@@ -106,7 +134,7 @@ export const GlobalFilterBar: React.FC<Props> = ({
           />
         </div>
 
-        {/* Multi-select Importance Filters */}
+        {/* Multi-select Importance Buttons */}
         <div className="flex items-center space-x-1.5">
           <span className="text-xs font-medium text-slate-500 flex items-center">
             <Filter className="w-3 h-3 mr-1" />
@@ -142,7 +170,7 @@ export const GlobalFilterBar: React.FC<Props> = ({
           )}
         </div>
 
-        {/* Date Filter & Sort */}
+        {/* Date Sorting Order Dropdown */}
         <div className="flex items-center space-x-1.5">
           <span className="text-xs font-medium text-slate-500">Date Sort:</span>
           <select
@@ -159,7 +187,7 @@ export const GlobalFilterBar: React.FC<Props> = ({
           </select>
         </div>
 
-        {/* Category Filter */}
+        {/* Category Filter Dropdown */}
         {categories.length > 0 && (
           <div className="flex items-center space-x-1.5">
             <span className="text-xs font-medium text-slate-500">Category:</span>
@@ -183,3 +211,4 @@ export const GlobalFilterBar: React.FC<Props> = ({
     </div>
   )
 }
+

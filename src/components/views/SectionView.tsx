@@ -1,5 +1,24 @@
 'use client'
 
+/**
+ * ============================================================================
+ * SECTION VIEW COMPONENT (SectionView.tsx)
+ * ============================================================================
+ * HOW IT WORKS:
+ * Organizes tasks into collapsible accordion sections grouped by their `category`.
+ * 
+ * CORE FEATURES:
+ * 1. Category Grouping: Uses `useMemo` to bucket `filteredTasks` by category name.
+ * 2. Accordion Collapsing: Maintains `collapsedSections` state allowing users to expand
+ *    or collapse individual category folders.
+ * 3. Badge Counters: Shows total task count for each section header.
+ * 4. Nested Grid: Renders standard `TaskCard` instances within each expanded group.
+ * 
+ * WHERE ITS EFFECTS LEAD:
+ * - Provides a domain/project-oriented organization view without disrupting
+ *   global filter state or task ordering.
+ */
+
 import React, { useState } from 'react'
 import { Task } from '@/types'
 import { useTasks } from '@/context/TaskContext'
@@ -13,7 +32,9 @@ interface Props {
 export const SectionView: React.FC<Props> = ({ onEdit }) => {
   const { filteredTasks } = useTasks()
 
-  // Group tasks by category
+  /**
+   * Group tasks dynamically by category label (defaulting to 'General' if omitted)
+   */
   const groupedTasks = React.useMemo(() => {
     const groups: Record<string, Task[]> = {}
     filteredTasks.forEach((task) => {
@@ -24,9 +45,10 @@ export const SectionView: React.FC<Props> = ({ onEdit }) => {
     return groups
   }, [filteredTasks])
 
-  // Track expanded state for accordions (all open by default)
+  // Track expanded/collapsed state for each category accordion
   const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({})
 
+  // Toggle open/closed state for a given category
   const toggleSection = (category: string) => {
     setCollapsedSections((prev) => ({
       ...prev,
@@ -36,6 +58,7 @@ export const SectionView: React.FC<Props> = ({ onEdit }) => {
 
   const categories = Object.keys(groupedTasks)
 
+  // Empty state fallback
   if (categories.length === 0) {
     return (
       <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">
@@ -76,7 +99,7 @@ export const SectionView: React.FC<Props> = ({ onEdit }) => {
               </div>
             </button>
 
-            {/* Accordion Content */}
+            {/* Accordion Expanded Content */}
             {!isCollapsed && (
               <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 bg-slate-50/30">
                 {tasksInSection.map((task) => (
@@ -90,3 +113,4 @@ export const SectionView: React.FC<Props> = ({ onEdit }) => {
     </div>
   )
 }
+

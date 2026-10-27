@@ -1,9 +1,35 @@
+/**
+ * ============================================================================
+ * /api/tasks - TASK COLLECTION ENDPOINTS (GET & POST)
+ * ============================================================================
+ * This route file handles:
+ * 1. GET: Fetching all tasks belonging to the authenticated user.
+ * 2. POST: Creating a new task record with initialized SLA tracking fields.
+ * 
+ * MULTI-TENANT ISOLATION:
+ * Every database query strictly filters by `user_id = auth.userId`, guaranteeing
+ * that users can never see or modify tasks created by other users.
+ */
+
 import { NextResponse } from 'next/server'
 import { getDb } from '@/lib/db'
 import { getAuthUserFromRequest } from '@/lib/jwt'
 
-
-// Helper to format DB task to Task interface
+/**
+ * mapDbTask
+ * ----------------------------------------------------------------------------
+ * HOW IT WORKS:
+ * Transforms a raw snake_case row from the PostgreSQL `tasks` table into the
+ * standardized camelCase `Task` TypeScript interface required by the client.
+ * Converts DB timestamps into ISO 8601 strings and casts numeric counters.
+ * 
+ * WHERE ITS EFFECTS LEAD:
+ * - Ensures uniform object shapes across the frontend React components.
+ * - Prevents NaN errors in SLA duration math by defaulting counters to 0.
+ * 
+ * @param {any} row - Raw database query row
+ * @returns {Task} Cleanly typed Task model
+ */
 export function mapDbTask(row: any) {
   return {
     id: row.id,
@@ -22,6 +48,19 @@ export function mapDbTask(row: any) {
   }
 }
 
+/**
+ * GET /api/tasks
+ * ----------------------------------------------------------------------------
+ * HOW IT WORKS:
+ * 1. Verifies Bearer JWT from `Authorization` header.
+ * 2. Queries Neon Postgres `tasks` table where `user_id = auth.userId`.
+ * 3. Orders results with newest tasks first (`created_at DESC`).
+ * 4. Transforms each row via `mapDbTask`.
+ * 
+ * WHERE ITS EFFECTS LEAD:
+ * - Feeds the `fetchTasks()` method in `TaskContext.tsx`.
+ * - Populates the task board views on initial dashboard load.
+ */
 export async function GET(request: Request) {
   try {
     const auth = getAuthUserFromRequest(request)
@@ -47,6 +86,27 @@ export async function GET(request: Request) {
   }
 }
 
+/**
+ * POST /api/tasks
+ * ----------------------------------------------------------------------------
+ * HOW IT WORKS:
+ * 1. Validates user authentication.
+ * 2. Extracts `title`, `description`, `category`, `status`, `importance`, and `dueDate`.
+ * 3. Enforces sensible defaults:
+ *    - Status defaults to 'To Do'
+ *    - Importance defaults to 'Medium'
+ *    - Due Date defaults to 7 days from now if not provided
+ * 4. Sets initial SLA tracking fields:
+ *    - `current_stage_entered_at`: current timestamp
+ *    - `time_in_todo_seconds`: 0
+ *    - `time_in_progress_seconds`: 0
+ *    - `stage_transitions_count`: 0
+ * 5. Inserts the record into Neon Postgres and returns the mapped task.
+ * 
+ * WHERE ITS EFFECTS LEAD:
+ * - New task is saved permanently in the database.
+ * - Added to `TaskContext` state array, instantly rendering in all 4 dashboard views.
+ */
 export async function POST(request: Request) {
   try {
     const auth = getAuthUserFromRequest(request)
@@ -113,3 +173,4 @@ export async function POST(request: Request) {
     )
   }
 }
+
