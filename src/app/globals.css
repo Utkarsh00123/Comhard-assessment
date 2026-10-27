@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: 'Clarity City';
+  font-weight: 300;
+  font-style: normal;
+  src: url('/fonts/clarity-city/ClarityCity-Light.woff2') format('woff2');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Clarity City';
+  font-weight: 400;
+  font-style: normal;
+  src: url('/fonts/clarity-city/ClarityCity-Regular.woff2') format('woff2');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Clarity City';
+  font-weight: 500;
+  font-style: normal;
+  src: url('/fonts/clarity-city/ClarityCity-Medium.woff2') format('woff2');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Clarity City';
+  font-weight: 600;
+  font-style: normal;
+  src: url('/fonts/clarity-city/ClarityCity-SemiBold.woff2') format('woff2');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Clarity City';
+  font-weight: 700;
+  font-style: normal;
+  src: url('/fonts/clarity-city/ClarityCity-Bold.woff2') format('woff2');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Clarity City';
+  font-weight: 800;
+  font-style: normal;
+  src: url('/fonts/clarity-city/ClarityCity-ExtraBold.woff2') format('woff2');
+  font-display: swap;
+}
+
+:root {
+  --app-bg: #FFFFFF;
+  --app-sidebar: #F6F7F4;
+  --app-card: #FFFFFF;
+  --app-border: #E8ECE6;
+  --app-muted: #71717A;
+  --app-dark: #18181B;
+  --font-family-city: 'Clarity City', -apple-system, sans-serif;
+  --font-family-figtree: var(--font-figtree), 'Figtree', sans-serif;
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #FFFFFF;
+  color: var(--app-dark);
+  font-family: var(--font-family-figtree);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Enforce the two specified fonts project-wide */
+h1, h2, h3, h4, h5, h6, .font-heading, .font-city {
+  font-family: var(--font-family-city) !important;
+}
+
+body, p, span, button, input, textarea, select, label, .font-body, .font-figtree {
+  font-family: var(--font-family-figtree);
+}
+
+/* Custom subtle scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #D1D5DB;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #9CA3AF;
+}

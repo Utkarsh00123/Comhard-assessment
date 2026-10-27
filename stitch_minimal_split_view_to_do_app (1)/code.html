@@ -1,0 +1,296 @@
+<!DOCTYPE html><html lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Minimalist Task &amp; Productivity Dashboard</title>
+<!-- Tailwind CSS CDN with Forms & Container Queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+<!-- Tailwind Configuration -->
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            app: {
+              bg: '#E9EBE5',
+              card: '#FFFFFF',
+              sidebar: '#F4F5F2',
+              border: '#E5E7EB',
+              muted: '#71717A',
+              dark: '#18181B',
+            },
+            pastel: {
+              mint: '#D1FAE5',
+              mintText: '#065F46',
+              cyan: '#CFFAFE',
+              cyanText: '#0E7490',
+              coral: '#FFE4E6',
+              coralText: '#9F1239',
+              yellow: '#FEF3C7',
+              yellowText: '#92400E',
+              orangeDot: '#FF7A59',
+              blueDot: '#38BDF8',
+              yellowDot: '#FBBF24',
+            }
+          },
+          boxShadow: {
+            'soft': '0 20px 40px -15px rgba(0, 0, 0, 0.05)',
+            'subtle': '0 2px 8px rgba(0, 0, 0, 0.03)',
+          }
+        }
+      }
+    }
+  </script>
+<!-- Custom Styles for Typography & UI Polish -->
+<style data-purpose="custom-enhancements">
+    body {
+      background-color: #E8ECE6;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    /* Custom subtle scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #D1D5DB;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #9CA3AF;
+    }
+  </style>
+</head>
+<body class="min-h-screen text-slate-800 p-4 md:p-6 lg:p-8 flex items-center justify-center">
+<!-- BEGIN: ApplicationWindow -->
+<div class="w-full max-w-7xl bg-white rounded-3xl shadow-soft overflow-hidden border border-white/60 flex flex-col lg:flex-row min-h-[820px]" data-purpose="app-shell">
+<!-- BEGIN: LeftSidebar -->
+<aside class="w-full lg:w-72 bg-[#F6F7F4] border-r border-[#E8ECE6] p-6 flex flex-col justify-between flex-shrink-0" data-purpose="sidebar-navigation">
+<div class="space-y-6">
+<!-- Sidebar Header & Search -->
+<div>
+<!-- Menu Bar & Hamburger -->
+<div class="flex items-center justify-between mb-4">
+<h2 class="text-xl font-bold tracking-tight text-slate-900">Menu</h2>
+<button aria-label="Toggle navigation" class="p-1.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-200/60 transition" type="button">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+</div>
+<!-- Quick Search -->
+<div class="relative">
+<span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</span>
+<input class="w-full pl-9 pr-3 py-1.5 bg-white border border-[#E2E6DF] rounded-xl text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400/20 focus:border-slate-400 transition" placeholder="Search" type="text">
+</div>
+</div>
+<!-- Tasks Section -->
+<div class="space-y-6"><nav class="space-y-1" data-purpose="tasks-menu"><p class="text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">TASKS</p><a class="flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:bg-white/80 hover:text-slate-900 font-medium text-sm transition group" href="#"><div class="flex items-center gap-3"><svg class="w-4 h-4 text-slate-400 group-hover:text-slate-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span class="">Upcoming</span></div><span class="text-xs bg-slate-200/80 px-2 py-0.5 rounded-md font-semibold text-slate-600">12</span></a><a class="flex items-center justify-between px-3 py-2 rounded-xl bg-white shadow-sm text-slate-900 font-semibold text-sm transition" href="#"><div class="flex items-center gap-3"><svg class="w-4 h-4 text-slate-800" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 0 1 0 3.75H5.625a1.875 1.875 0 0 1 0-3.75Z" stroke-linecap="round" stroke-linejoin="round"></path></svg><span class="">Today</span></div><span class="text-xs bg-slate-100 px-2 py-0.5 rounded-md font-bold text-slate-800">5</span></a><a class="flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:bg-white/80 hover:text-slate-900 font-medium text-sm transition group" href="#"><div class="flex items-center gap-3"><svg class="w-4 h-4 text-slate-400 group-hover:text-slate-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" stroke-linecap="round" stroke-linejoin="round"></path></svg><span class="">Sticky Wall</span></div></a></nav><div class="space-y-1" data-purpose="views-menu"><p class="text-[11px] font-bold tracking-wider text-slate-400 uppercase mb-2">VIEWS</p><a class="flex items-center justify-between px-3 py-2 rounded-xl bg-white shadow-sm text-slate-900 font-semibold text-sm transition" href="#"><div class="flex items-center gap-3"><svg class="w-4 h-4 text-slate-800" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span class="">List</span></div><span class="text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded font-medium">Active</span></a><a class="flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:bg-white/80 hover:text-slate-900 font-medium text-sm transition group" href="#"><div class="flex items-center gap-3"><svg class="w-4 h-4 text-slate-400 group-hover:text-slate-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 4.5v15m6-15v15M4.5 4.5h15a1.5 1.5 0 0 1 1.5 1.5v12a1.5 1.5 0 0 1-1.5 1.5h-15a1.5 1.5 0 0 1-1.5-1.5v-12A1.5 1.5 0 0 1 4.5 4.5Z" stroke-linecap="round" stroke-linejoin="round"></path></svg><span class="">Kanban</span></div></a><a class="flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:bg-white/80 hover:text-slate-900 font-medium text-sm transition group" href="#"><div class="flex items-center gap-3"><svg class="w-4 h-4 text-slate-400 group-hover:text-slate-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" stroke-linecap="round" stroke-linejoin="round"></path></svg><span class="">Grid</span></div></a><a class="flex items-center justify-between px-3 py-2 rounded-xl text-slate-600 hover:bg-white/80 hover:text-slate-900 font-medium text-sm transition group" href="#"><div class="flex items-center gap-3"><svg class="w-4 h-4 text-slate-400 group-hover:text-slate-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 9v7.5" stroke-linecap="round" stroke-linejoin="round"></path></svg><span class="">Calendar</span></div></a></div></div>
+<!-- Lists Section -->
+
+<!-- Tags Section -->
+
+</div>
+<!-- Bottom Settings & Profile Actions -->
+<div class="pt-6 border-t border-[#E8ECE6] space-y-1" data-purpose="sidebar-footer">
+<a class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:bg-white/80 hover:text-slate-900 text-sm font-medium transition" href="#">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" stroke-linecap="round" stroke-linejoin="round"></path>
+<path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span class="">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-xl text-slate-600 hover:bg-white/80 hover:text-slate-900 text-sm font-medium transition" href="#">
+<svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span class="">Sign out</span>
+</a>
+</div>
+</aside>
+<!-- END: LeftSidebar -->
+<!-- BEGIN: MainContent -->
+<main class="flex-1 p-6 md:p-10 bg-white flex flex-col justify-between overflow-y-auto" data-purpose="tasks-main-workspace">
+<!-- Header Content Area -->
+<div class="space-y-8">
+<!-- Title & Counter -->
+<header class="flex items-baseline gap-3">
+<h1 class="text-4xl font-extrabold tracking-tight text-slate-900">Today</h1>
+<span class="text-2xl font-bold text-slate-400 font-mono">5</span>
+</header>
+<!-- Task Input Trigger -->
+<div data-purpose="quick-add-task">
+<button class="w-full text-left flex items-center gap-3 px-4 py-3 rounded-2xl border border-slate-200 text-slate-400 hover:border-slate-300 hover:text-slate-600 transition bg-slate-50/50" type="button">
+<svg class="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M12 4.5v15m7.5-7.5h-15" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span class="text-sm font-medium">Add New Task</span>
+</button>
+</div>
+<!-- Today's Primary Task List -->
+<section class="space-y-2" data-purpose="primary-task-list">
+<!-- Task Item 1 -->
+<div class="group flex items-center justify-between p-3.5 rounded-2xl border border-slate-100 hover:border-slate-200 hover:bg-slate-50/70 transition">
+<div class="flex items-center gap-3">
+<input class="w-4 h-4 rounded text-slate-900 focus:ring-0 border-slate-300 transition cursor-pointer" type="checkbox">
+<span class="text-sm font-medium text-slate-800">Research content ideas</span>
+</div>
+<button aria-label="View task details" class="text-slate-300 group-hover:text-slate-600 transition" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="m8.25 4.5 7.5 7.5-7.5 7.5" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+</div>
+<!-- Task Item 2 -->
+<div class="group flex items-center justify-between p-3.5 rounded-2xl border border-slate-100 hover:border-slate-200 hover:bg-slate-50/70 transition">
+<div class="flex items-center gap-3">
+<input class="w-4 h-4 rounded text-slate-900 focus:ring-0 border-slate-300 transition cursor-pointer" type="checkbox">
+<span class="text-sm font-medium text-slate-800">Create a database of guest authors</span>
+</div>
+<button aria-label="View task details" class="text-slate-300 group-hover:text-slate-600 transition" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="m8.25 4.5 7.5 7.5-7.5 7.5" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+</div>
+<!-- Task Item 3 (Expanded details: tags, due date, subtasks) -->
+<div class="group flex flex-col md:flex-row md:items-center justify-between gap-3 p-3.5 rounded-2xl border border-slate-200/90 bg-slate-50/30 hover:bg-slate-50 transition shadow-subtle">
+<div class="flex items-center gap-3">
+<input class="w-4 h-4 rounded text-slate-900 focus:ring-0 border-slate-300 transition cursor-pointer" type="checkbox">
+<span class="text-sm font-medium text-slate-900">Renew driver's license</span>
+</div>
+<div class="flex items-center gap-3 pl-7 md:pl-0">
+<!-- Due date badge -->
+<span class="inline-flex items-center gap-1.5 text-xs text-slate-500 font-medium">
+<svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 9v7.5" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+<span class="">22-03-22</span>
+</span>
+<!-- Subtask counter -->
+<span class="inline-flex items-center gap-1 text-xs bg-slate-200/80 px-2 py-0.5 rounded-md font-semibold text-slate-600">
+<span class="">1</span>
+<span class="font-normal text-[11px]">Subtasks</span>
+</span>
+<!-- Category tag -->
+<span class="inline-flex items-center gap-1 text-xs text-slate-600 font-medium">
+<span class="w-2 h-2 rounded-full bg-[#FF8059]"></span>
+<span class="">Personal</span>
+</span>
+<button aria-label="View task details" class="text-slate-300 group-hover:text-slate-600 transition pl-2" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="m8.25 4.5 7.5 7.5-7.5 7.5" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+</div>
+</div>
+<!-- Task Item 4 -->
+<div class="group flex items-center justify-between p-3.5 rounded-2xl border border-slate-100 hover:border-slate-200 hover:bg-slate-50/70 transition">
+<div class="flex items-center gap-3">
+<input class="w-4 h-4 rounded text-slate-900 focus:ring-0 border-slate-300 transition cursor-pointer" type="checkbox">
+<span class="text-sm font-medium text-slate-800">Consult accountant</span>
+</div>
+<button aria-label="View task details" class="text-slate-300 group-hover:text-slate-600 transition" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="m8.25 4.5 7.5 7.5-7.5 7.5" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+</div>
+<!-- Task Item 5 -->
+<div class="group flex items-center justify-between p-3.5 rounded-2xl border border-slate-100 hover:border-slate-200 hover:bg-slate-50/70 transition">
+<div class="flex items-center gap-3">
+<input class="w-4 h-4 rounded text-slate-900 focus:ring-0 border-slate-300 transition cursor-pointer" type="checkbox">
+<span class="text-sm font-medium text-slate-800">Print business card</span>
+</div>
+<button aria-label="View task details" class="text-slate-300 group-hover:text-slate-600 transition" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+<path d="m8.25 4.5 7.5 7.5-7.5 7.5" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</button>
+</div>
+</section>
+<!-- Secondary Section: Tomorrow & Upcoming Overview Cards -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4" data-purpose="secondary-task-sections">
+<!-- Tomorrow Box -->
+<div class="p-5 rounded-2xl bg-[#FAFAF8] border border-[#ECEEE9] flex flex-col justify-between">
+<div>
+<h3 class="text-base font-bold text-slate-800 mb-3">Tomorrow</h3>
+<button class="w-full text-left flex items-center gap-2 px-3 py-2 mb-3 rounded-xl border border-dashed border-slate-300 text-xs text-slate-400 hover:text-slate-600 transition" type="button">
+<span class="font-bold">+</span>
+<span class="">Add New Task</span>
+</button>
+<div class="space-y-2">
+<div class="flex items-center justify-between p-2.5 rounded-xl bg-white border border-slate-100 text-xs font-medium text-slate-700">
+<div class="flex items-center gap-2">
+<input class="w-3.5 h-3.5 rounded text-slate-900 focus:ring-0 border-slate-300 cursor-pointer" type="checkbox">
+<span class="">Create job posting for SEO specialist</span>
+</div>
+<span class="text-slate-300">›</span>
+</div>
+<div class="flex items-center justify-between p-2.5 rounded-xl bg-white border border-slate-100 text-xs font-medium text-slate-700">
+<div class="flex items-center gap-2">
+<input class="w-3.5 h-3.5 rounded text-slate-900 focus:ring-0 border-slate-300 cursor-pointer" type="checkbox">
+<span class="">Request design assets for landing page</span>
+</div>
+<span class="text-slate-300">›</span>
+</div>
+</div>
+</div>
+</div>
+<!-- This Week Box -->
+<div class="p-5 rounded-2xl bg-[#FAFAF8] border border-[#ECEEE9] flex flex-col justify-between">
+<div>
+<h3 class="text-base font-bold text-slate-800 mb-3">This Week</h3>
+<button class="w-full text-left flex items-center gap-2 px-3 py-2 mb-3 rounded-xl border border-dashed border-slate-300 text-xs text-slate-400 hover:text-slate-600 transition" type="button">
+<span class="font-bold">+</span>
+<span class="">Add New Task</span>
+</button>
+<div class="space-y-2">
+<div class="flex items-center justify-between p-2.5 rounded-xl bg-white border border-slate-100 text-xs font-medium text-slate-700">
+<div class="flex items-center gap-2">
+<input class="w-3.5 h-3.5 rounded text-slate-900 focus:ring-0 border-slate-300 cursor-pointer" type="checkbox">
+<span class="">Content calendar review</span>
+</div>
+<span class="text-slate-300">›</span>
+</div>
+<div class="flex items-center justify-between p-2.5 rounded-xl bg-white border border-slate-100 text-xs font-medium text-slate-700">
+<div class="flex items-center gap-2">
+<input class="w-3.5 h-3.5 rounded text-slate-900 focus:ring-0 border-slate-300 cursor-pointer" type="checkbox">
+<span class="">Prepare client presentation</span>
+</div>
+<span class="text-slate-300">›</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Info -->
+<footer class="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400" data-purpose="workspace-footer">
+<span class="">Press <kbd class="px-1.5 py-0.5 bg-slate-100 border border-slate-200 rounded font-mono text-[10px]">C</kbd> to add task quickly</span>
+<div class="flex items-center gap-4">
+<span class="flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span> Synced
+          </span>
+</div>
+</footer>
+</main>
+<!-- END: MainContent -->
+</div>
+<!-- END: ApplicationWindow -->
+
+
+</body></html>
