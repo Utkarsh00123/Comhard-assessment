@@ -1,107 +1,87 @@
-# Task Management & SLA Engine
+# Task-Management App
 
-A full-stack, enterprise-grade Task Management Application built with **Next.js (App Router)**, **Neon Serverless PostgreSQL**, and a custom **JWT Authentication System** with password hashing via `bcryptjs`. Features real-time SLA metrics, 4 modular views (List, Kanban, Grid, Section), global filtering, and a minimalist split-view interface styled with **Clarity City** and **Figtree** typography.
+A lightweight, modern web app for managing daily tasks. Built with **Next.js**, **React**, **TypeScript**, **Tailwind CSS**, and **Supabase** for authentication. The UI follows the *Stitch Minimal* split‑view design, using only the two fonts from the **Clarity‑City** and **FigTree** font families.
 
----
+## Quick start (username / password)
 
-## 📸 Screenshots
-
-### Kanban View
-![Kanban View](screenshots/kanban-view.png)
-
-### Grid View
-![Grid View](screenshots/grid-view.png)
-
----
-
-## ✨ Features
-
-- **Custom JWT Authentication (No BaaS Auth):**
-  - Secure signup, login, and forgot password endpoints.
-  - Passwords hashed with `bcryptjs`.
-  - Stateless signed JWTs stored in client and transmitted via `Authorization: Bearer <token>`.
-  - Protected application routes with unauthenticated redirect to `/login`.
-
-- **Neon Serverless PostgreSQL Database:**
-  - Fast, serverless SQL driver via `@neondatabase/serverless`.
-  - Relational schema with user isolation (`users`, `tasks`, `sla_logs`).
-  - Indexed for high performance.
-
-- **4 Modular Views (Single Source of Truth):**
-  - **List View:** Detailed tabular view with live SLA counters and fast actions.
-  - **Kanban View:** Drag-and-drop / single-click stage transitions across `To Do`, `In Progress`, and `Done`.
-  - **Grid View:** Responsive card grid highlighting importance and live timers.
-  - **Section View:** Grouped accordion view organized by task categories.
-
-- **Strict SLA (Service Level Agreement) Engine:**
-  - **Active Section Tracking:** Records exact time elapsed while a task sits in `To Do` or `In Progress`.
-  - **Forward Movement:** When tasks move backward (e.g. `In Progress` -> `To Do`), the SLA clock does not reset; it resumes counting forward against the `To Do` bucket.
-  - **Completion Zeroing:** SLA for the `Done` stage is strictly `0s`; once a task is marked `Done`, active timers halt permanently.
-  - **Metrics Displayed:**
-    - Live time spent in current section.
-    - Total cumulative time spent across all sections prior to `Done`.
-    - Average SLA per stage transition (`Total Time / Transitions`).
-
-- **Global Filtering:**
-  - Multi-select filters for `Importance` (`High`, `Medium`, `Low`).
-  - Date sorting (`Due Date`, `Creation Date`).
-  - Category selector & full-text search across title and description.
-  - Filters apply globally across all active views.
-
-- **Design & Typography:**
-  - Split-view minimalist desktop application layout.
-  - Custom typography utilizing **Clarity City** (headings, numbers, metrics) and **Figtree** (body, controls, UI).
-  - Quick keyboard shortcut: Press **`C`** anywhere to create a new task.
-
----
-
-## 🚀 Getting Started
-
-### 1. Prerequisites
-- Node.js 18+ (tested on Node 20 / 24)
-- A Neon PostgreSQL Database project ([neon.tech](https://neon.tech))
-
-### 2. Environment Setup
-Copy the example environment file and add your credentials:
 ```bash
-cp .env.example .env.local
-```
-Fill in `.env.local`:
-```env
-DATABASE_URL="postgresql://user:password@ep-xyz.aws.neon.tech/neondb?sslmode=require"
-DATABASE_URL_UNPOOLED="postgresql://user:password@ep-xyz.aws.neon.tech/neondb?sslmode=require"
-JWT_SECRET="your_super_secret_jwt_key_here"
-```
+# Clone the repo (if you haven’t already)
+git clone https://github.com/Utkarsh00123/Comhard-assessment.git
+cd Comhard-assessment
 
-### 3. Install Dependencies
-```bash
+# Install dependencies
 npm install
-```
 
-### 4. Initialize Database Schema
-Run the automated schema migration script to initialize tables and indexes in your Neon database:
-```bash
-node --env-file=.env.local scripts/init-db.mjs
-```
+# Copy the example env file and add your Supabase credentials
+cp .env.example .env
+# Edit .env → set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY
 
-### 5. Start Development Server
-```bash
+# Run the dev server
 npm run dev
 ```
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+Open <http://localhost:3000> and log in with any email / password you create on the sign‑up screen. The app works out‑of‑the‑box with a localStorage mock if the Supabase keys are left blank.
+
+## Description
+
+A single‑page task manager that separates the **task list** (left pane) from the **task details** (right pane). The left pane stays fixed while the right pane scrolls when its content exceeds the viewport. All UI elements are styled with Tailwind CSS and the custom fonts from the two linked repositories.
+
+## Interesting techniques
+
+| Technique | Where it’s used | MDN reference |
+|-----------|----------------|---------------|
+| **CSS Grid + Fixed‑position pane** | `src/components/Layout.tsx` – left pane fixed, right pane scrollable | [CSS Grid Layout](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Grid_Layout) |
+| **IntersectionObserver** | Lazy‑load task cards in `src/components/TaskCard.tsx` | [IntersectionObserver API](https://developer.mozilla.org/en-US/docs/Web/API/IntersectionObserver) |
+| **CSS custom properties for theming** | `src/index.css` defines `--font-sans` and colors | [CSS Variables](https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties) |
+| **Dynamic imports for route‑level code splitting** | `src/pages/dashboard.tsx` uses `import()` | [Dynamic import](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import) |
+| **Environment variable handling via Vite** | `src/lib/supabaseClient.ts` reads `import.meta.env` | [Vite Env Variables](https://vitejs.dev/guide/env-and-mode.html) |
+| **Tailwind CSS JIT mode** | Tailwind config (`tailwind.config.ts`) uses JIT for on‑demand utilities | [Tailwind JIT](https://tailwindcss.com/docs/just-in-time-mode) |
+
+## Non‑obvious technologies & libraries
+
+- **Supabase JS** – client‑side auth & DB wrapper (`@supabase/supabase-js`).
+- **React Router v6** – declarative routing (`react-router-dom`).
+- **Lucide‑React** – lightweight SVG icons.
+- **date‑fns** – date utilities for task timestamps.
+- **@tailwindcss/vite** – Vite plugin that enables hot‑reloading of Tailwind classes.
+- **Mock auth fallback** – a tiny localStorage‑based mock that works when Supabase keys are missing (see `src/lib/mockAuth.ts`).
+
+All dependencies are listed in `package.json`.
+
+## Fonts
+
+The UI uses two custom fonts:
+
+- **Clarity City** – from the [vmware‑archive/clarity‑city](https://github.com/vmware-archive/clarity-city) repo.
+- **FigTree** – from the [erikdkennedy/figtree](https://github.com/erikdkennedy/figtree) repo.
+
+Both are loaded via `@font-face` rules in `src/index.css`.
+
+## Project structure
+
+```text
+/
+├─ .git/                     # Git history
+├─ .next/                    # Next.js build output
+├─ public/                   # Static assets (favicon, robots.txt, etc.)
+├─ screenshots/              # Example screenshots used in the README
+├─ scripts/                  # Helper scripts (e.g., e2e tests)
+├─ src/                      # Application source
+│   ├─ app/                  # API routes (e.g., auth/me)
+│   ├─ components/           # Reusable UI components
+│   ├─ context/              # React context providers (TaskContext, AuthContext)
+│   ├─ lib/                  # Supabase client & mock auth helpers
+│   ├─ pages/                # Next.js pages (dashboard, login, etc.)
+│   └─ styles/               # Tailwind entry (index.css)
+├─ stitch_minimal_split_view_to_do_app (1)/  # Original design assets
+├─ .env.example              # Template for required environment variables
+├─ .env                      # Local development env (git‑ignored)
+├─ next.config.ts            # Next.js configuration (including font imports)
+├─ tailwind.config.ts        # Tailwind configuration
+├─ tsconfig.json             # TypeScript configuration
+└─ package.json              # Project metadata & scripts
+```
+
+*The `src/` folder holds all React code; `public/` contains static files that are served unchanged. The `stitch_minimal_split_view_to_do_app (1)/` directory stores the original UI mock‑ups that inspired the layout.*
 
 ---
-
-## 🧪 Testing & Verification
-
-Run the end-to-end integration test suite against the running app:
-```bash
-node scripts/test-e2e.mjs
-```
-The suite verifies:
-1. User registration (`/api/auth/signup`)
-2. Bcrypt password verification & login (`/api/auth/login`)
-3. Authenticated session (`/api/auth/me`)
-4. Password reset token generation (`/api/auth/forgot-password`)
-5. Task creation, listing, forward/backward stage transitions, and SLA logging
-6. Task deletion
